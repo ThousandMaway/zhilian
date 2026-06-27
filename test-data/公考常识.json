@@ -1,0 +1,107 @@
+[
+  {
+    "stem": "中国共产党成立于哪一年？",
+    "type": "single_choice",
+    "options": [
+      { "id": "A", "content": "1919年" },
+      { "id": "B", "content": "1921年" },
+      { "id": "C", "content": "1927年" },
+      { "id": "D", "content": "1949年" }
+    ],
+    "answer": "B",
+    "analysis": "1921年7月，中共一大在上海召开，标志着中国共产党的正式成立。",
+    "difficulty": 1
+  },
+  {
+    "stem": "我国现行宪法是哪一年通过的？",
+    "type": "single_choice",
+    "options": [
+      { "id": "A", "content": "1954年" },
+      { "id": "B", "content": "1975年" },
+      { "id": "C", "content": "1978年" },
+      { "id": "D", "content": "1982年" }
+    ],
+    "answer": "D",
+    "analysis": "我国现行宪法是1982年12月4日由第五届全国人大第五次会议通过的。",
+    "difficulty": 1
+  },
+  {
+    "stem": "以下哪些属于行政处罚的种类？（多选）",
+    "type": "multi_choice",
+    "options": [
+      { "id": "A", "content": "警告" },
+      { "id": "B", "content": "罚款" },
+      { "id": "C", "content": "拘役" },
+      { "id": "D", "content": "吊销许可证" }
+    ],
+    "answer": ["A", "B", "D"],
+    "analysis": "拘役属于刑罚，不属于行政处罚。警告、罚款、吊销许可证均属于行政处罚。",
+    "difficulty": 2
+  },
+  {
+    "stem": "市场经济的核心机制是 ______ 机制。",
+    "type": "fill_blank",
+    "options": null,
+    "answer": "价格/市场",
+    "analysis": "价格机制是市场经济的核心，通过价格信号调节供需关系。",
+    "difficulty": 2
+  },
+  {
+    "stem": "政审通过后是否一定被录用为公务员？",
+    "type": "true_false",
+    "options": null,
+    "answer": "false",
+    "analysis": "政审是必要条件而非充分条件，还需通过体检、公示等环节。",
+    "difficulty": 2
+  },
+  {
+    "stem": "行政法的基本原则包括？（多选）",
+    "type": "multi_choice",
+    "options": [
+      { "id": "A", "content": "合法性原则" },
+      { "id": "B", "content": "合理性原则" },
+      { "id": "C", "content": "效率优先原则" },
+      { "id": "D", "content": "程序正当原则" }
+    ],
+    "answer": ["A", "B", "D"],
+    "analysis": "行政法基本原则包括合法性、合理性、程序正当等。效率是目标但不是基本原则。",
+    "difficulty": 3
+  },
+  {
+    "stem": "简述我国国家机构的组织和活动原则。",
+    "type": "short_answer",
+    "options": null,
+    "answer": "民主集中制原则、社会主义法治原则、责任制原则、精简和效率原则、为人民服务原则。",
+    "analysis": "《宪法》规定国家机构实行民主集中制，同时遵循法治、责任制等原则。",
+    "difficulty": 3
+  },
+  {
+    "stem": "全国人民代表大会每届任期几年？",
+    "type": "single_choice",
+    "options": [
+      { "id": "A", "content": "3年" },
+      { "id": "B", "content": "4年" },
+      { "id": "C", "content": "5年" },
+      { "id": "D", "content": "6年" }
+    ],
+    "answer": "C",
+    "analysis": "全国人大每届任期五年。",
+    "difficulty": 1
+  },
+  {
+    "stem": "经济体制改革的核心是处理好 ______ 的关系。",
+    "type": "fill_blank",
+    "options": null,
+    "answer": "政府和市场",
+    "analysis": "十八届三中全会指出，经济体制改革的核心是处理好政府和市场的关系。",
+    "difficulty": 2
+  },
+  {
+    "stem": "简述新发展理念的内涵。",
+    "type": "short_answer",
+    "options": null,
+    "answer": "创新、协调、绿色、开放、共享。创新解决动力问题，协调解决不平衡问题，绿色解决人与自然和谐问题，开放解决内外联动问题，共享解决公平正义问题。",
+    "analysis": "五大发展理念是习近平新时代中国特色社会主义思想的重要组成部分。",
+    "difficulty": 2
+  }
+]

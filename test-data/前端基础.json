@@ -1,0 +1,102 @@
+[
+  {
+    "stem": "以下哪个是 JavaScript 的基本数据类型？",
+    "type": "single_choice",
+    "options": [
+      { "id": "A", "content": "Array" },
+      { "id": "B", "content": "Object" },
+      { "id": "C", "content": "String" },
+      { "id": "D", "content": "Date" }
+    ],
+    "answer": "C",
+    "analysis": "String 是 JS 的 7 种基本数据类型之一，Array/Object/Date 都是引用类型。",
+    "difficulty": 1
+  },
+  {
+    "stem": "以下哪些是有效的 CSS 长度单位？（多选）",
+    "type": "multi_choice",
+    "options": [
+      { "id": "A", "content": "px" },
+      { "id": "B", "content": "em" },
+      { "id": "C", "content": "dm" },
+      { "id": "D", "content": "rem" }
+    ],
+    "answer": ["A", "B", "D"],
+    "analysis": "px/em/rem 都是 CSS 长度单位，dm 不是。",
+    "difficulty": 2
+  },
+  {
+    "stem": "React 中的 useState 是一个 Hook。",
+    "type": "true_false",
+    "options": null,
+    "answer": "true",
+    "analysis": "useState 是 React 最基础的 Hook，用于在函数组件中管理状态。",
+    "difficulty": 1
+  },
+  {
+    "stem": "HTTP 状态码 404 表示 ______。",
+    "type": "fill_blank",
+    "options": null,
+    "answer": "未找到/Not Found",
+    "analysis": "404 Not Found 表示服务器无法找到请求的资源。",
+    "difficulty": 1
+  },
+  {
+    "stem": "请简要说明什么是闭包（Closure）。",
+    "type": "short_answer",
+    "options": null,
+    "answer": "闭包是指函数能够访问其外部作用域中变量的能力，即使外部函数已经执行完毕。闭包由函数及其引用的外部变量共同组成。",
+    "analysis": "核心要点：函数+外部变量、词法作用域、内存驻留。",
+    "difficulty": 2
+  },
+  {
+    "stem": "Git 中用于查看提交历史的命令是什么？",
+    "type": "single_choice",
+    "options": [
+      { "id": "A", "content": "git status" },
+      { "id": "B", "content": "git log" },
+      { "id": "C", "content": "git diff" },
+      { "id": "D", "content": "git show" }
+    ],
+    "answer": "B",
+    "analysis": "git log 用于查看提交历史，git status 查看工作区状态，git diff 查看差异。",
+    "difficulty": 1
+  },
+  {
+    "stem": "TypeScript 中用于定义接口的关键字是什么？",
+    "type": "fill_blank",
+    "options": null,
+    "answer": "interface",
+    "analysis": "interface 关键字用于定义对象的类型结构。",
+    "difficulty": 1
+  },
+  {
+    "stem": "Promise 有三种状态：pending、______ 和 rejected。",
+    "type": "fill_blank",
+    "options": null,
+    "answer": "fulfilled",
+    "analysis": "Promise 的三种状态：pending(进行中)、fulfilled(已成功)、rejected(已失败)。",
+    "difficulty": 2
+  },
+  {
+    "stem": "所有的 CSS 属性都可以被继承。",
+    "type": "true_false",
+    "options": null,
+    "answer": "false",
+    "analysis": "只有部分 CSS 属性可以被继承（如 color、font-size），盒模型相关属性（如 margin、padding）不会继承。",
+    "difficulty": 2
+  },
+  {
+    "stem": "以下哪些是前端性能优化的有效手段？（多选）",
+    "type": "multi_choice",
+    "options": [
+      { "id": "A", "content": "代码分割（Code Splitting）" },
+      { "id": "B", "content": "图片懒加载" },
+      { "id": "C", "content": "所有资源内联到 HTML" },
+      { "id": "D", "content": "使用 CDN 加速静态资源" }
+    ],
+    "answer": ["A", "B", "D"],
+    "analysis": "代码分割、懒加载和 CDN 都是有效的优化手段。所有资源内联反而会增大 HTML 体积，影响首屏加载。",
+    "difficulty": 2
+  }
+]

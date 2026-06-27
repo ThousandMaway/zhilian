@@ -1,0 +1,40 @@
+export type AuthStackParamList = {
+  Login: undefined;
+  Register: undefined;
+};
+
+export type MainTabParamList = {
+  HomeTab: undefined;
+  QuestionsTab: undefined;
+  PracticeTab: undefined;
+  ProfileTab: undefined;
+};
+
+export type HomeStackParamList = {
+  Home: undefined;
+  PracticeResult: { recordId: string };
+};
+
+export type QuestionsStackParamList = {
+  QuestionList: undefined;
+  QuestionDetail: { questionId?: string };
+  QuestionEdit: { questionId?: string };
+  ImportQuestions: undefined;
+};
+
+export type PracticeStackParamList = {
+  PracticeConfig: undefined;
+  RandomConfig: undefined;
+  LibrarySelect: undefined;
+  PracticeQuiz: { mode: string; questionIds?: string[] };
+  PracticeResult: { sessionId?: string };
+};
+
+export type ProfileStackParamList = {
+  Profile: undefined;
+  WrongQuestions: undefined;
+  Favorites: undefined;
+  CheckinHistory: undefined;
+  Statistics: undefined;
+  Settings: undefined;
+};

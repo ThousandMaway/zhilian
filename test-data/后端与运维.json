@@ -1,0 +1,102 @@
+[
+  {
+    "stem": "TCP 三次握手中，客户端首先发送什么报文？",
+    "type": "single_choice",
+    "options": [
+      { "id": "A", "content": "ACK" },
+      { "id": "B", "content": "SYN" },
+      { "id": "C", "content": "FIN" },
+      { "id": "D", "content": "RST" }
+    ],
+    "answer": "B",
+    "analysis": "三次握手过程：客户端发送 SYN → 服务器回复 SYN+ACK → 客户端发送 ACK。",
+    "difficulty": 2
+  },
+  {
+    "stem": "以下哪些属于 NoSQL 数据库？（多选）",
+    "type": "multi_choice",
+    "options": [
+      { "id": "A", "content": "MongoDB" },
+      { "id": "B", "content": "MySQL" },
+      { "id": "C", "content": "Redis" },
+      { "id": "D", "content": "PostgreSQL" }
+    ],
+    "answer": ["A", "C"],
+    "analysis": "MongoDB(文档型)和 Redis(键值型)是 NoSQL。MySQL 和 PostgreSQL 是关系型数据库。",
+    "difficulty": 2
+  },
+  {
+    "stem": "Docker 容器与宿主机共享同一个操作系统内核。",
+    "type": "true_false",
+    "options": null,
+    "answer": "true",
+    "analysis": "Docker 容器共享宿主机内核，通过 Namespace 和 Cgroups 实现隔离。",
+    "difficulty": 1
+  },
+  {
+    "stem": "RESTful API 中，GET 请求通常用于 ______ 资源。",
+    "type": "fill_blank",
+    "options": null,
+    "answer": "获取/查询",
+    "analysis": "GET 用于获取/查询资源，POST 用于创建，PUT/PATCH 用于更新，DELETE 用于删除。",
+    "difficulty": 1
+  },
+  {
+    "stem": "简述什么是微服务架构及其主要优势。",
+    "type": "short_answer",
+    "options": null,
+    "answer": "微服务架构是将应用拆分为多个小型、独立部署的服务。优势：独立部署和扩展、技术栈灵活、故障隔离、团队自治。",
+    "analysis": "核心要点：服务拆分、独立部署、去中心化治理。",
+    "difficulty": 3
+  },
+  {
+    "stem": "Redis 中用于设置键过期时间的命令是什么？",
+    "type": "single_choice",
+    "options": [
+      { "id": "A", "content": "SETEX" },
+      { "id": "B", "content": "EXPIRE" },
+      { "id": "C", "content": "TTL" },
+      { "id": "D", "content": "PERSIST" }
+    ],
+    "answer": "B",
+    "analysis": "EXPIRE 用于设置键的过期时间（秒）。SETEX 是设置值的同时指定过期时间。",
+    "difficulty": 2
+  },
+  {
+    "stem": "HTTPS 握手后用对称加密传输数据。",
+    "type": "true_false",
+    "options": null,
+    "answer": "true",
+    "analysis": "HTTPS 握手阶段用非对称加密交换密钥，之后的数据传输使用对称加密。",
+    "difficulty": 3
+  },
+  {
+    "stem": "数据库事务 ACID 中 I 代表 ______。",
+    "type": "fill_blank",
+    "options": null,
+    "answer": "Isolation/隔离性",
+    "analysis": "ACID：Atomicity、Consistency、Isolation、Durability。",
+    "difficulty": 1
+  },
+  {
+    "stem": "以下哪些是常见的负载均衡算法？（多选）",
+    "type": "multi_choice",
+    "options": [
+      { "id": "A", "content": "轮询（Round Robin）" },
+      { "id": "B", "content": "哈希取模" },
+      { "id": "C", "content": "先进先出（FIFO）" },
+      { "id": "D", "content": "最少连接数" }
+    ],
+    "answer": ["A", "B", "D"],
+    "analysis": "轮询、哈希取模、最少连接数是常见负载均衡算法。FIFO 是队列调度策略。",
+    "difficulty": 2
+  },
+  {
+    "stem": "简述你对 DevOps 的理解。",
+    "type": "short_answer",
+    "options": null,
+    "answer": "DevOps 强调开发与运维的协作、自动化和持续交付。通过 CI/CD、基础设施即代码等实践，缩短开发周期，提高交付质量。",
+    "analysis": "核心：协作文化、自动化、CI/CD、持续改进。",
+    "difficulty": 2
+  }
+]

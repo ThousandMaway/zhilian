@@ -1,25 +1,47 @@
 {
   "expo": {
-    "name": "quiz-app",
+    "name": "智练",
     "slug": "quiz-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yishuati.quizapp"
     },
     "android": {
+      "package": "com.yishuati.quizapp",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-sqlite",
+      "expo-secure-store",
+      "expo-sharing",
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "允许访问相机以拍照识别题目",
+          "photosPermission": "允许访问相册以导入题目图片"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "abfee990-b6d6-4007-b73f-24c214871a49"
+      }
     }
   }
 }
