@@ -7,7 +7,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { Shuffle, FileText, RotateCcw, Star } from "lucide-react-native";
+import { Shuffle, FileText, RotateCcw, Star, Clipboard } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PracticeMode } from "~/types";
 import { useWrongQuestions, useFavorites } from "~/queries/practice";
@@ -92,6 +92,14 @@ export default function PracticeConfigScreen({ navigation }: any) {
       icon: <FileText size={24} color="#8b5cf6" />,
       color: "bg-purple-100",
       onPress: () => navigation.navigate("LibrarySelect"),
+    },
+    {
+      key: PracticeMode.PAPER,
+      title: "试卷模式",
+      desc: "创建试卷，模拟真实考试",
+      icon: <Clipboard size={24} color="#f59e0b" />,
+      color: "bg-yellow-100",
+      onPress: () => navigation.navigate("PaperList"),
     },
     {
       key: PracticeMode.WRONG,

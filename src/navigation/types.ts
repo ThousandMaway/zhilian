@@ -26,6 +26,8 @@ export type PracticeStackParamList = {
   PracticeConfig: undefined;
   RandomConfig: undefined;
   LibrarySelect: undefined;
+  PaperList: undefined;
+  PaperEdit: { paperId?: string };
   PracticeQuiz: { mode: string; questionIds?: string[] };
   PracticeResult: { sessionId?: string };
 };

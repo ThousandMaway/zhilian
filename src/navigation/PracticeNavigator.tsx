@@ -6,6 +6,8 @@ import RandomConfigScreen from "~/screens/Practice/RandomConfigScreen";
 import LibrarySelectScreen from "~/screens/Practice/LibrarySelectScreen";
 import PracticeQuizScreen from "~/screens/Practice/PracticeQuizScreen";
 import PracticeResultScreen from "~/screens/Practice/PracticeResultScreen";
+import PaperListScreen from "~/screens/Practice/PaperListScreen";
+import PaperEditScreen from "~/screens/Practice/PaperEditScreen";
 
 const Stack = createNativeStackNavigator<PracticeStackParamList>();
 
@@ -25,6 +27,16 @@ export default function PracticeNavigator() {
       <Stack.Screen
         name="LibrarySelect"
         component={LibrarySelectScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PaperList"
+        component={PaperListScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PaperEdit"
+        component={PaperEditScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen

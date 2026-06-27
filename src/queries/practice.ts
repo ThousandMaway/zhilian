@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "~/lib/supabase";
-import type { PracticeRecord, WrongQuestion, DailyCheckin } from "~/types";
+import type { PracticeRecord, WrongQuestion, DailyCheckin, Paper, Question } from "~/types";
 import { DAILY_CHECKIN_GOAL } from "~/constants";
 
 async function getUserId(): Promise<string> {
@@ -304,6 +304,135 @@ export function useFavoritedIds(questionIds: string[]) {
         .in("question_id", questionIds);
       if (error) throw error;
       return new Set((data || []).map((r) => r.question_id));
+    },
+  });
+}
+
+// ============================================================
+// Papers
+// ============================================================
+
+export function usePapers() {
+  return useQuery({
+    queryKey: ["papers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("papers")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as Paper[];
+    },
+  });
+}
+
+export function usePaper(id: string | undefined) {
+  return useQuery({
+    queryKey: ["paper", id],
+    queryFn: async () => {
+      if (!id) return null;
+      const { data, error } = await supabase
+        .from("papers")
+        .select("*, paper_questions(question_id, sort_order, questions(*))")
+        .eq("id", id)
+        .single();
+      if (error) throw error;
+      return data as Paper & {
+        paper_questions: Array<{
+          question_id: string;
+          sort_order: number;
+          questions: Question;
+        }>;
+      };
+    },
+    enabled: !!id,
+  });
+}
+
+export function useCreatePaper() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      title,
+      description,
+      questionIds,
+    }: {
+      title: string;
+      description?: string;
+      questionIds: string[];
+    }) => {
+      const userId = await getUserId();
+      const { data: paper, error } = await supabase
+        .from("papers")
+        .insert({
+          user_id: userId,
+          title,
+          description: description || null,
+          question_count: questionIds.length,
+        })
+        .select()
+        .single();
+      if (error) throw error;
+
+      if (questionIds.length > 0) {
+        const links = questionIds.map((qid, idx) => ({
+          paper_id: paper.id,
+          question_id: qid,
+          sort_order: idx + 1,
+        }));
+        await supabase.from("paper_questions").insert(links);
+      }
+
+      return paper;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["papers"] });
+    },
+  });
+}
+
+export function useDeletePaper() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("papers").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["papers"] });
+    },
+  });
+}
+
+export function useUpdatePaperQuestions() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      paperId,
+      questionIds,
+    }: {
+      paperId: string;
+      questionIds: string[];
+    }) => {
+      await supabase.from("paper_questions").delete().eq("paper_id", paperId);
+
+      if (questionIds.length > 0) {
+        const links = questionIds.map((qid, idx) => ({
+          paper_id: paperId,
+          question_id: qid,
+          sort_order: idx + 1,
+        }));
+        await supabase.from("paper_questions").insert(links);
+      }
+
+      await supabase
+        .from("papers")
+        .update({ question_count: questionIds.length })
+        .eq("id", paperId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["papers"] });
+      queryClient.invalidateQueries({ queryKey: ["paper"] });
     },
   });
 }
