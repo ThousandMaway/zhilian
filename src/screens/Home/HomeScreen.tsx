@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuthStore } from "~/stores/auth";
 import {
   BookOpen,
@@ -58,10 +59,12 @@ export default function HomeScreen({ navigation }: any) {
     100
   );
 
+  const insets = useSafeAreaInsets();
+
   return (
     <ScrollView style={tw`flex-1 bg-gray-50`}>
       {/* 顶部问候 */}
-      <View style={tw`bg-primary-600 px-6 pt-14 pb-8 rounded-b-3xl`}>
+      <View style={[tw`bg-primary-600 px-6 pb-8 rounded-b-3xl`, { paddingTop: insets.top }]}>
         <Text style={tw`text-white/80 text-sm`}>早上好 👋</Text>
         <Text style={tw`text-white text-xl font-bold mt-1`}>
           {user?.email?.split("@")[0] || "同学"}

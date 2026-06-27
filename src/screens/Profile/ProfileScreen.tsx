@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   User,
   BookMarked,
@@ -16,6 +17,7 @@ import tw from "~/lib/tw";
 export default function ProfileScreen({ navigation }: any) {
   const user = useAuthStore((s) => s.user);
   const signOut = useAuthStore((s) => s.signOut);
+  const insets = useSafeAreaInsets();
 
   const menuItems = [
     {
@@ -58,7 +60,7 @@ export default function ProfileScreen({ navigation }: any) {
   return (
     <ScrollView style={tw`flex-1 bg-gray-50`}>
       {/* 用户信息 */}
-      <View style={tw`bg-white pt-14 pb-6 px-4 border-b border-gray-100`}>
+      <View style={[tw`bg-white pb-6 px-4 border-b border-gray-100`, { paddingTop: insets.top }]}>
         <View style={tw`flex-row items-center`}>
           <View style={tw`w-16 h-16 bg-primary-100 rounded-full items-center justify-center`}>
             <User size={28} color="#3b82f6" />

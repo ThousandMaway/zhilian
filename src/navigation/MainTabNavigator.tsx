@@ -1,5 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { MainTabParamList } from "./types";
 import HomeNavigator from "./HomeNavigator";
 import QuestionsNavigator from "./QuestionsNavigator";
@@ -10,6 +11,7 @@ import { Home, BookOpen, Play, User } from "lucide-react-native";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function MainTabNavigator() {
+  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -18,8 +20,8 @@ export default function MainTabNavigator() {
         tabBarInactiveTintColor: "#9ca3af",
         tabBarStyle: {
           borderTopColor: "#f3f4f6",
-          paddingBottom: 4,
-          height: 56,
+          paddingBottom: insets.bottom || 4,
+          height: 56 + (insets.bottom || 0),
         },
         tabBarLabelStyle: {
           fontSize: 11,

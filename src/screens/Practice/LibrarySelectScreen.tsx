@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { BookOpen, ChevronRight, ArrowLeft } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTags, useAllQuestions } from "~/queries/questions";
 import { usePracticeStore } from "~/stores/practice";
 import tw from "~/lib/tw";
@@ -17,6 +18,7 @@ export default function LibrarySelectScreen({ navigation }: any) {
   const { data: tags = [], isLoading: tagsLoading } = useTags();
   const startPractice = usePracticeStore((s) => s.startPractice);
   const [loading, setLoading] = useState(false);
+  const insets = useSafeAreaInsets();
 
   // 预取全部题目（带标签信息，不分页）
   const { data: allQuestions } = useAllQuestions();
@@ -73,7 +75,7 @@ export default function LibrarySelectScreen({ navigation }: any) {
 
   return (
     <ScrollView style={tw`flex-1 bg-gray-50`}>
-      <View style={tw`pt-14 pb-4 px-4 bg-white border-b border-gray-100`}>
+      <View style={[tw`pb-4 px-4 bg-white border-b border-gray-100`, { paddingTop: insets.top }]}>
         <View style={tw`flex-row items-center`}>
           <TouchableOpacity style={tw`mr-3 p-1`} onPress={() => navigation.goBack()}>
             <ArrowLeft size={22} color="#3b82f6" />

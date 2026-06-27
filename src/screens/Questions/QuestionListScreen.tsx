@@ -10,6 +10,7 @@ import {
   Alert,
 } from "react-native";
 import { Search, Plus, Upload, Trash2, BookOpen, ChevronRight, ArrowLeft } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QuestionType, QuestionTypeLabel } from "~/types";
 import { useQuestions, useDeleteQuestion, useTags, useUpdateTag, useDeleteTag } from "~/queries/questions";
 import tw from "~/lib/tw";
@@ -32,6 +33,7 @@ export default function QuestionListScreen({ navigation }: any) {
   const deleteTagMutation = useDeleteTag();
   const [renameTagId, setRenameTagId] = useState<string | null>(null);
   const [renameText, setRenameText] = useState("");
+  const insets = useSafeAreaInsets();
 
   let questions = data?.data || [];
   // "未分类"：客户端过滤无标签题目
@@ -83,7 +85,7 @@ export default function QuestionListScreen({ navigation }: any) {
 
     return (
       <ScrollView style={tw`flex-1 bg-gray-50`}>
-        <View style={tw`bg-white px-4 pt-14 pb-4 border-b border-gray-100`}>
+        <View style={[tw`bg-white px-4 pb-4 border-b border-gray-100`, { paddingTop: insets.top }]}>
           <Text style={tw`text-2xl font-bold text-gray-800`}>题库</Text>
           <Text style={tw`text-gray-400 text-sm mt-1`}>
             选择一个题库查看或导入题目
@@ -249,7 +251,7 @@ export default function QuestionListScreen({ navigation }: any) {
   return (
     <View style={tw`flex-1 bg-gray-50`}>
       {/* 顶部 */}
-      <View style={tw`bg-white px-4 pt-14 pb-3 border-b border-gray-100`}>
+      <View style={[tw`bg-white px-4 pb-3 border-b border-gray-100`, { paddingTop: insets.top }]}>
         <View style={tw`flex-row items-center mb-2`}>
           <TouchableOpacity
             style={tw`mr-3 p-1`}

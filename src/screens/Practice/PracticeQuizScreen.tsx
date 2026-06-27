@@ -263,7 +263,7 @@ export default function PracticeQuizScreen({ navigation }: any) {
   return (
     <View style={tw`flex-1 bg-white`}>
       {/* 顶部进度条 + 计时器 */}
-      <View style={tw`pt-14 pb-2 bg-white border-b border-gray-100`}>
+      <View style={tw`pt-0 pb-2 bg-white border-b border-gray-100`}>
         {/* 进度条 */}
         <View style={tw`bg-gray-100 h-1.5 mb-3 mx-4 rounded-full overflow-hidden`}>
           <View

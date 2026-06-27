@@ -35,7 +35,7 @@ export default function PracticeResultScreen({ route, navigation }: any) {
   return (
     <ScrollView style={tw`flex-1 bg-white`}>
       {/* 成绩展示 */}
-      <View style={tw`items-center pt-16 pb-8`}>
+      <View style={tw`items-center pt-4 pb-8`}>
         <Text style={tw`text-6xl mb-4`}>{grade.emoji}</Text>
         <Text style={tw`text-2xl font-bold ${grade.color}`}>
           {grade.label}

@@ -7,6 +7,7 @@ import {
   Alert,
 } from "react-native";
 import { ArrowLeft } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PracticeMode, QuestionType, QuestionTypeLabel } from "~/types";
 import { useAllQuestions, useTags } from "~/queries/questions";
 import { usePracticeStore } from "~/stores/practice";
@@ -22,6 +23,7 @@ export default function RandomConfigScreen({ navigation }: any) {
   const { data: tags = [] } = useTags();
   const { data: allQuestions } = useAllQuestions();
   const startPractice = usePracticeStore((s) => s.startPractice);
+  const insets = useSafeAreaInsets();
 
   const toggleType = (type: QuestionType) => {
     setSelectedTypes((prev) => prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]);
@@ -59,7 +61,7 @@ export default function RandomConfigScreen({ navigation }: any) {
 
   return (
     <ScrollView style={tw`flex-1 bg-gray-50`}>
-      <View style={tw`pt-14 pb-4 px-4 bg-white border-b border-gray-100`}>
+      <View style={[tw`pb-4 px-4 bg-white border-b border-gray-100`, { paddingTop: insets.top }]}>
         <View style={tw`flex-row items-center`}>
           <TouchableOpacity style={tw`mr-3 p-1`} onPress={() => navigation.goBack()}>
             <ArrowLeft size={22} color="#3b82f6" />

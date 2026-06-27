@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Shuffle, FileText, RotateCcw, Star } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PracticeMode } from "~/types";
 import { useWrongQuestions, useFavorites } from "~/queries/practice";
 import { usePracticeStore } from "~/stores/practice";
@@ -21,6 +22,7 @@ export default function PracticeConfigScreen({ navigation }: any) {
 
   const { data: favoritesData } = useFavorites();
   const { data: wrongQuestionsData } = useWrongQuestions();
+  const insets = useSafeAreaInsets();
 
   const handleStartPractice = async (mode: PracticeMode) => {
     setLoading(true);
@@ -111,7 +113,7 @@ export default function PracticeConfigScreen({ navigation }: any) {
 
   return (
     <ScrollView style={tw`flex-1 bg-gray-50`}>
-      <View style={tw`pt-14 pb-4 px-4 bg-white border-b border-gray-100`}>
+      <View style={[tw`pb-4 px-4 bg-white border-b border-gray-100`, { paddingTop: insets.top }]}>
         <Text style={tw`text-2xl font-bold text-gray-800`}>开始练习</Text>
         <Text style={tw`text-gray-400 text-sm mt-1`}>
           选择练习模式
