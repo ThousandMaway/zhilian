@@ -212,7 +212,6 @@ export default function WrongQuestionsScreen({ navigation }: any) {
         ) : (
           <View style={tw`flex-row items-center justify-between`}>
             <View>
-              <Text style={tw`text-gray-800 font-semibold text-lg`}>错题记录</Text>
               <Text style={tw`text-gray-400 text-sm`}>
                 {count > 0 ? `共 ${count} 道错题 · 长按多选` : "暂无错题，继续保持！"}
               </Text>

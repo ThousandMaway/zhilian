@@ -99,9 +99,8 @@ export default function FavoritesScreen({ navigation }: any) {
 
   return (
     <View style={tw`flex-1 bg-gray-50`}>
-      <View style={tw`bg-white px-4 pt-4 pb-3 border-b border-gray-100 flex-row items-center justify-between`}>
+      <View style={tw`bg-white px-4 pb-3 border-b border-gray-100 flex-row items-center justify-between`}>
         <View>
-          <Text style={tw`text-gray-800 font-semibold text-lg`}>我的收藏</Text>
           <Text style={tw`text-gray-400 text-sm`}>
             {count > 0 ? `共 ${count} 道收藏` : "暂无收藏"}
           </Text>
