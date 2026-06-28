@@ -185,12 +185,14 @@ export default function PracticeQuizScreen({ navigation }: any) {
     }
   };
 
-  // 是否需要确认按钮
-  const needsConfirmation = currentQuestion && !showResult && [
-    QuestionType.MULTI_CHOICE,
-    QuestionType.FILL_BLANK,
-    QuestionType.SHORT_ANSWER,
-  ].includes(currentQuestion.type as QuestionType);
+  // 非自由模式：所有题型都需要确认后才显示答案
+  // 自由模式：单选/判断即时显示，多选/填空/简答需确认
+  const needsConfirmation = currentQuestion && !showResult && (
+    mode !== PracticeMode.FREE ||
+    [QuestionType.MULTI_CHOICE, QuestionType.FILL_BLANK, QuestionType.SHORT_ANSWER].includes(
+      currentQuestion.type as QuestionType
+    )
+  );
 
   // 提交所有答案
   const handleSubmit = () => {
