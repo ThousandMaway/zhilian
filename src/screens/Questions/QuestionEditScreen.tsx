@@ -360,6 +360,38 @@ export default function QuestionEditScreen({ route, navigation }: any) {
         </View>
       )}
 
+      {/* 题库标签 */}
+      <View style={tw`px-4 mt-4`}>
+        <Text style={tw`text-sm font-medium text-gray-500 mb-2`}>
+          所属题库（可多选）
+        </Text>
+        {availableTags.length > 0 ? (
+          <View style={tw`flex-row flex-wrap gap-2`}>
+            {availableTags.map((tag) => (
+              <TouchableOpacity
+                key={tag.id}
+                style={tw`px-4 py-2 rounded-full border ${
+                  selectedTags.includes(tag.id)
+                    ? "bg-primary-600 border-primary-600"
+                    : "bg-gray-50 border-gray-200"
+                }`}
+                onPress={() => toggleTag(tag.id)}
+              >
+                <Text
+                  style={tw`text-sm ${
+                    selectedTags.includes(tag.id) ? "text-white" : "text-gray-600"
+                  }`}
+                >
+                  {tag.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        ) : (
+          <Text style={tw`text-gray-400 text-sm`}>暂无题库标签，导入题库或前往题库页创建后可选</Text>
+        )}
+      </View>
+
       {/* 难度 */}
       <View style={tw`px-4 mt-4`}>
         <Text style={tw`text-sm font-medium text-gray-500 mb-2`}>难度</Text>
@@ -388,36 +420,6 @@ export default function QuestionEditScreen({ route, navigation }: any) {
             </TouchableOpacity>
           ))}
         </View>
-      </View>
-
-      {/* 标签 */}
-      <View style={tw`px-4 mt-4`}>
-        <Text style={tw`text-sm font-medium text-gray-500 mb-2`}>标签</Text>
-        {availableTags.length > 0 ? (
-          <View style={tw`flex-row flex-wrap gap-2`}>
-            {availableTags.map((tag) => (
-              <TouchableOpacity
-                key={tag.id}
-                style={tw`px-4 py-2 rounded-full border ${
-                  selectedTags.includes(tag.id)
-                    ? "bg-primary-600 border-primary-600"
-                    : "bg-gray-50 border-gray-200"
-                }`}
-                onPress={() => toggleTag(tag.id)}
-              >
-                <Text
-                  style={tw`text-sm ${
-                    selectedTags.includes(tag.id) ? "text-white" : "text-gray-600"
-                  }`}
-                >
-                  {tag.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <Text style={tw`text-gray-400 text-sm`}>暂无标签，保存题目后可创建</Text>
-        )}
       </View>
 
       {/* 解析 */}

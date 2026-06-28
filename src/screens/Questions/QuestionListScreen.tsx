@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -12,7 +12,7 @@ import {
 import { Search, Plus, Upload, Trash2, BookOpen, ChevronRight, ArrowLeft } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { QuestionType, QuestionTypeLabel } from "~/types";
-import { useQuestions, useDeleteQuestion, useTags, useUpdateTag, useDeleteTag } from "~/queries/questions";
+import { useQuestions, useDeleteQuestion, useTags, useUpdateTag, useDeleteTag, useCreateTag } from "~/queries/questions";
 import tw from "~/lib/tw";
 
 export default function QuestionListScreen({ navigation }: any) {
@@ -31,7 +31,15 @@ export default function QuestionListScreen({ navigation }: any) {
   const deleteMutation = useDeleteQuestion();
   const updateTagMutation = useUpdateTag();
   const deleteTagMutation = useDeleteTag();
+  const createTagMutation = useCreateTag();
   const [renameTagId, setRenameTagId] = useState<string | null>(null);
+
+  // 新用户自动创建默认题库
+  useEffect(() => {
+    if (!tagsLoading && tags.length === 0) {
+      createTagMutation.mutate({ name: "默认题库", color: "#3b82f6" });
+    }
+  }, [tagsLoading, tags.length]);
   const [renameText, setRenameText] = useState("");
   const insets = useSafeAreaInsets();
 
