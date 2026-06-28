@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { Trash2, Play, RotateCcw, BookOpen, ChevronRight } from "lucide-react-native";
+import { Trash2, RotateCcw, BookOpen, ChevronRight, Check, X } from "lucide-react-native";
 import { useWrongQuestions, useRemoveWrongQuestion } from "~/queries/practice";
 import { usePracticeStore } from "~/stores/practice";
 import { QuestionType } from "~/types";
@@ -18,12 +18,43 @@ export default function WrongQuestionsScreen({ navigation }: any) {
   const { data: wrongQuestions, isLoading } = useWrongQuestions();
   const removeWrong = useRemoveWrongQuestion();
   const startPractice = usePracticeStore((s) => s.startPractice);
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const handleRemove = (questionId: string) => {
     Alert.alert("移除错题", "确定要从错题本中移除这道题吗？", [
       { text: "取消", style: "cancel" },
       { text: "移除", style: "destructive", onPress: () => removeWrong.mutate(questionId) },
     ]);
+  };
+
+  const handleBatchRemove = () => {
+    if (selectedIds.size === 0) return;
+    Alert.alert("批量移除", `确定要移除选中的 ${selectedIds.size} 道错题吗？`, [
+      { text: "取消", style: "cancel" },
+      {
+        text: "移除",
+        style: "destructive",
+        onPress: () => {
+          selectedIds.forEach((id) => removeWrong.mutate(id));
+          setSelectedIds(new Set());
+          setSelectionMode(false);
+        },
+      },
+    ]);
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+        if (next.size === 0) setSelectionMode(false);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   };
 
   const handleRetrySingle = (question: Question) => {
@@ -43,18 +74,14 @@ export default function WrongQuestionsScreen({ navigation }: any) {
     navigation.navigate("PracticeTab", { screen: "PracticeQuiz" });
   };
 
-  // 按标签分组
   const grouped = useMemo(() => {
     const tagMap: Record<string, { tagName: string; items: any[] }> = {};
     const untagged: any[] = [];
-
     for (const wq of wrongQuestions || []) {
       const tags = wq.questions?.tags || [];
       if (tags.length > 0) {
         for (const tag of tags) {
-          if (!tagMap[tag.id]) {
-            tagMap[tag.id] = { tagName: tag.name, items: [] };
-          }
+          if (!tagMap[tag.id]) tagMap[tag.id] = { tagName: tag.name, items: [] };
           if (!tagMap[tag.id].items.some((i) => i.id === wq.id)) {
             tagMap[tag.id].items.push(wq);
           }
@@ -63,8 +90,6 @@ export default function WrongQuestionsScreen({ navigation }: any) {
         untagged.push(wq);
       }
     }
-
-    // 转为列表格式
     const sections: { key: string; tagName: string; items: any[] }[] = [];
     for (const [id, group] of Object.entries(tagMap)) {
       sections.push({ key: id, tagName: group.tagName, items: group.items });
@@ -100,46 +125,60 @@ export default function WrongQuestionsScreen({ navigation }: any) {
     <View style={tw`mb-4`}>
       <View style={tw`flex-row items-center px-4 mb-2`}>
         <BookOpen size={16} color="#6b7280" />
-        <Text style={tw`text-gray-500 text-sm font-medium ml-1.5`}>
-          {section.tagName}
-        </Text>
-        <Text style={tw`text-gray-300 text-xs ml-2`}>
-          {section.items.length} 题
-        </Text>
+        <Text style={tw`text-gray-500 text-sm font-medium ml-1.5`}>{section.tagName}</Text>
+        <Text style={tw`text-gray-300 text-xs ml-2`}>{section.items.length} 题</Text>
       </View>
       {section.items.map((item: any) => {
         const question = item.questions as Question | null;
         if (!question) return null;
         const badge = getTypeBadge(question.type);
+        const isSelected = selectedIds.has(question.id);
 
         return (
           <TouchableOpacity
             key={item.id}
-            style={tw`bg-white rounded-xl p-4 mb-2 mx-4 border border-gray-100`}
-            onPress={() => handleRetrySingle(question)}
+            style={tw`bg-white rounded-xl p-4 mb-2 mx-4 border ${isSelected ? "border-primary-400 bg-primary-50" : "border-gray-100"}`}
+            onPress={() => {
+              if (selectionMode) {
+                toggleSelect(question.id);
+              } else {
+                handleRetrySingle(question);
+              }
+            }}
+            onLongPress={() => {
+              if (!selectionMode) {
+                setSelectionMode(true);
+                setSelectedIds(new Set([question.id]));
+              }
+            }}
           >
-            <View style={tw`flex-row items-start justify-between`}>
-              <View style={tw`flex-row items-start flex-1 mr-2`}>
-                <View style={tw`rounded px-2 py-0.5 mr-2 mt-0.5 ${badge.color}`}>
-                  <Text style={tw`text-xs font-medium`}>{badge.label}</Text>
+            <View style={tw`flex-row items-start`}>
+              {selectionMode && (
+                <View style={tw`w-6 h-6 rounded-full border-2 items-center justify-center mr-2 mt-0.5 ${isSelected ? "bg-primary-600 border-primary-600" : "border-gray-300"}`}>
+                  {isSelected && <Check size={14} color="white" />}
                 </View>
-                <Text style={tw`text-gray-800 flex-1 leading-5 text-[15px]`} numberOfLines={2}>
-                  {question.stem}
-                </Text>
+              )}
+              <View style={tw`rounded px-2 py-0.5 mr-2 mt-0.5 ${badge.color}`}>
+                <Text style={tw`text-xs font-medium`}>{badge.label}</Text>
               </View>
-              <ChevronRight size={16} color="#d1d5db" style={tw`mt-1`} />
+              <Text style={tw`text-gray-800 flex-1 leading-5 text-[15px]`} numberOfLines={2}>
+                {question.stem}
+              </Text>
+              {!selectionMode && <ChevronRight size={16} color="#d1d5db" style={tw`mt-1 ml-1`} />}
             </View>
             <View style={tw`flex-row items-center justify-between mt-3 pt-3 border-t border-gray-50`}>
               <Text style={tw`text-gray-400 text-xs`}>
                 错误 <Text style={tw`text-red-500 font-bold`}>{item.wrong_count}</Text> 次
               </Text>
-              <TouchableOpacity
-                style={tw`flex-row items-center`}
-                onPress={() => handleRemove(question.id)}
-              >
-                <Trash2 size={16} color="#9ca3af" />
-                <Text style={tw`text-gray-400 text-xs ml-1`}>移除</Text>
-              </TouchableOpacity>
+              {!selectionMode && (
+                <TouchableOpacity
+                  style={tw`flex-row items-center`}
+                  onPress={() => handleRemove(question.id)}
+                >
+                  <Trash2 size={16} color="#9ca3af" />
+                  <Text style={tw`text-gray-400 text-xs ml-1`}>移除</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </TouchableOpacity>
         );
@@ -149,22 +188,45 @@ export default function WrongQuestionsScreen({ navigation }: any) {
 
   return (
     <View style={tw`flex-1 bg-gray-50`}>
-      {/* 顶部 */}
-      <View style={tw`bg-white px-4 pt-4 pb-3 border-b border-gray-100 flex-row items-center justify-between`}>
-        <View>
-          <Text style={tw`text-gray-800 font-semibold text-lg`}>错题记录</Text>
-          <Text style={tw`text-gray-400 text-sm`}>
-            {count > 0 ? `共 ${count} 道错题` : "暂无错题，继续保持！"}
-          </Text>
-        </View>
-        {count > 0 && (
-          <TouchableOpacity
-            style={tw`flex-row items-center bg-primary-600 rounded-xl px-4 py-2`}
-            onPress={handleRetryAll}
-          >
-            <RotateCcw size={16} color="white" />
-            <Text style={tw`text-white ml-1.5 font-medium text-sm`}>全部重练</Text>
-          </TouchableOpacity>
+      <View style={tw`bg-white px-4 pt-4 pb-3 border-b border-gray-100`}>
+        {selectionMode ? (
+          <View style={tw`flex-row items-center justify-between`}>
+            <TouchableOpacity
+              style={tw`flex-row items-center`}
+              onPress={() => { setSelectionMode(false); setSelectedIds(new Set()); }}
+            >
+              <X size={20} color="#6b7280" />
+              <Text style={tw`text-gray-600 ml-1`}>取消</Text>
+            </TouchableOpacity>
+            <Text style={tw`text-gray-800 font-semibold text-lg`}>
+              已选 {selectedIds.size} 项
+            </Text>
+            <TouchableOpacity
+              style={tw`flex-row items-center bg-red-500 rounded-xl px-4 py-2`}
+              onPress={handleBatchRemove}
+            >
+              <Trash2 size={16} color="white" />
+              <Text style={tw`text-white ml-1 font-medium text-sm`}>删除</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View style={tw`flex-row items-center justify-between`}>
+            <View>
+              <Text style={tw`text-gray-800 font-semibold text-lg`}>错题记录</Text>
+              <Text style={tw`text-gray-400 text-sm`}>
+                {count > 0 ? `共 ${count} 道错题 · 长按多选` : "暂无错题，继续保持！"}
+              </Text>
+            </View>
+            {count > 0 && (
+              <TouchableOpacity
+                style={tw`flex-row items-center bg-primary-600 rounded-xl px-4 py-2`}
+                onPress={handleRetryAll}
+              >
+                <RotateCcw size={16} color="white" />
+                <Text style={tw`text-white ml-1.5 font-medium text-sm`}>全部重练</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         )}
       </View>
 
