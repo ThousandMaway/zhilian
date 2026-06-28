@@ -412,10 +412,10 @@ export default function PracticeQuizScreen({ navigation }: any) {
           {currentIndex === totalQuestions - 1 ? (
             totalQuestions === 1 ? (
               <TouchableOpacity
-                style={tw`rounded-xl py-3 px-8 bg-gray-400`}
+                style={tw`rounded-xl py-3 px-8 bg-green-400`}
                 onPress={() => navigation.goBack()}
               >
-                <Text style={tw`text-white font-semibold`}>返回</Text>
+                <Text style={tw`text-white font-semibold`}>结束</Text>
               </TouchableOpacity>
             ) : (
             <TouchableOpacity
