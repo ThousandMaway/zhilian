@@ -144,6 +144,50 @@ export function useAddWrongQuestion() {
   });
 }
 
+// 批量记录错题（并行，比逐条调用快 N 倍）
+export function useAddWrongQuestions() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ questionIds }: { questionIds: string[] }) => {
+      if (questionIds.length === 0) return;
+      const userId = await getUserId();
+      await Promise.all(
+        questionIds.map(async (questionId) => {
+          try {
+            const { data: existing, error } = await supabase
+              .from("wrong_questions")
+              .select("id, wrong_count")
+              .eq("question_id", questionId)
+              .single();
+            if (error && error.code !== "PGRST116") throw error;
+            if (existing) {
+              await supabase
+                .from("wrong_questions")
+                .update({
+                  wrong_count: existing.wrong_count + 1,
+                  last_wrong_at: new Date().toISOString(),
+                })
+                .eq("id", existing.id);
+            } else {
+              await supabase.from("wrong_questions").insert({
+                user_id: userId,
+                question_id: questionId,
+                wrong_count: 1,
+                last_wrong_at: new Date().toISOString(),
+              });
+            }
+          } catch {
+            // 单条失败不影响其他
+          }
+        })
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wrong_questions"] });
+    },
+  });
+}
+
 export function useRemoveWrongQuestion() {
   const queryClient = useQueryClient();
   return useMutation({

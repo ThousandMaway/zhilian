@@ -19,7 +19,7 @@ import {
 import { usePracticeStore } from "~/stores/practice";
 import {
   useBulkCreatePracticeRecords,
-  useAddWrongQuestion,
+  useAddWrongQuestions,
   useUpsertCheckin,
   useFavoritedIds,
   useToggleFavorite,
@@ -54,7 +54,7 @@ export default function PracticeQuizScreen({ navigation }: any) {
   const startTimeRef = useRef<number>(startTime || Date.now());
 
   const bulkCreateRecords = useBulkCreatePracticeRecords();
-  const addWrongQuestion = useAddWrongQuestion();
+  const addWrongQuestions = useAddWrongQuestions();
   const upsertCheckin = useUpsertCheckin();
   const aiEvaluate = useAiEvaluate();
 
@@ -210,12 +210,14 @@ export default function PracticeQuizScreen({ navigation }: any) {
       );
       const records: any[] = [];
       let correctCount = 0;
+      const wrongIds: string[] = [];
 
       for (const q of questions) {
         const userAnswer = answers.get(q.id) ?? null;
         const isCorrect = checkAnswer(q, userAnswer);
 
         if (isCorrect) correctCount++;
+        else wrongIds.push(q.id);
 
         records.push({
           question_id: q.id,
@@ -224,19 +226,19 @@ export default function PracticeQuizScreen({ navigation }: any) {
           is_correct: isCorrect,
           time_spent: Math.floor(timeSpent / questions.length),
         });
-
-        // 记录错题
-        if (!isCorrect) {
-          try {
-            await addWrongQuestion.mutateAsync({ questionId: q.id });
-          } catch {
-            // 静默处理错题记录失败
-          }
-        }
       }
 
       // 批量保存答题记录
       await bulkCreateRecords.mutateAsync(records);
+
+      // 批量记录错题（并行，一次搞定）
+      if (wrongIds.length > 0) {
+        try {
+          await addWrongQuestions.mutateAsync({ questionIds: wrongIds });
+        } catch {
+          // 静默处理
+        }
+      }
 
       // 更新打卡
       await upsertCheckin.mutateAsync(questions.length);
