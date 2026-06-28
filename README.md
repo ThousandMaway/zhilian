@@ -52,6 +52,7 @@
 - Node.js ≥ 18
 - Expo CLI (`npm install -g expo-cli`)
 - Supabase 项目（免费创建：[supabase.com](https://supabase.com)）
+- 如要使用手机启动，要使手机和运行开发服务器的PC在同一网络下
 
 ### 安装
 
