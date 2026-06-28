@@ -33,6 +33,8 @@ export default function QuestionListScreen({ navigation }: any) {
   const deleteTagMutation = useDeleteTag();
   const createTagMutation = useCreateTag();
   const [renameTagId, setRenameTagId] = useState<string | null>(null);
+  const [renameText, setRenameText] = useState("");
+  const [renameSubmitted, setRenameSubmitted] = useState(false);
 
   // 新用户自动创建默认题库
   useEffect(() => {
@@ -41,17 +43,13 @@ export default function QuestionListScreen({ navigation }: any) {
     }
   }, [tagsLoading, tags.length]);
 
-  const [renameText, setRenameText] = useState("");
-
-  // 重命名确认后标签出现时自动关闭输入框
+  // 用户确认重命名后，标签列表更新时自动关闭输入框
   useEffect(() => {
-    if (renameTagId && tags.some((t) => t.id === renameTagId)) {
-      const tag = tags.find((t) => t.id === renameTagId);
-      if (tag && tag.name === renameText) {
-        setRenameTagId(null);
-      }
+    if (renameTagId && renameSubmitted && tags.some((t) => t.id === renameTagId && t.name === renameText)) {
+      setRenameTagId(null);
+      setRenameSubmitted(false);
     }
-  }, [tags, renameTagId, renameText]);
+  }, [tags, renameTagId, renameText, renameSubmitted]);
   const insets = useSafeAreaInsets();
 
   let questions = data?.data || [];
@@ -132,7 +130,8 @@ export default function QuestionListScreen({ navigation }: any) {
           <TouchableOpacity
             style={tw`flex-row items-center justify-center bg-white rounded-xl py-3 border border-dashed border-gray-300`}
             onPress={async () => {
-              setRenameTagId(null); // 关闭上一个重命名框
+              setRenameTagId(null);
+              setRenameSubmitted(false);
               try {
                 const data: any = await createTagMutation.mutateAsync({
                   name: "新题库",
@@ -169,6 +168,7 @@ export default function QuestionListScreen({ navigation }: any) {
                 style={tw`flex-1 bg-primary-600 rounded-xl py-2 items-center`}
                 onPress={() => {
                   if (renameText.trim()) {
+                    setRenameSubmitted(true);
                     updateTagMutation.mutate({ id: renameTagId, name: renameText.trim() });
                   }
                 }}
