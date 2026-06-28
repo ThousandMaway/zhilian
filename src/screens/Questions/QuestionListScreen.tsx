@@ -169,12 +169,19 @@ export default function QuestionListScreen({ navigation }: any) {
                   setRenameSubmitted(true);
                   // 如果是新标签（临时ID），先创建
                   if (renameTagId?.startsWith("new_")) {
+                    // 去重：如果名字已存在，加 (1)/(2)...
+                    let name = renameText.trim();
+                    const existingNames = new Set(tags.map((t) => t.name));
+                    if (existingNames.has(name)) {
+                      let i = 1;
+                      while (existingNames.has(`${name}(${i})`)) i++;
+                      name = `${name}(${i})`;
+                    }
                     try {
-                      const data: any = await createTagMutation.mutateAsync({
-                        name: renameText.trim(),
+                      await createTagMutation.mutateAsync({
+                        name,
                         color: "#3b82f6",
                       });
-                      // 创建成功后自动关闭
                       setRenameTagId(null);
                       setRenameSubmitted(false);
                     } catch {}
