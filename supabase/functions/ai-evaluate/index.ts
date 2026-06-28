@@ -44,6 +44,21 @@ serve(async (req) => {
       );
     }
 
+    // 速率限制：每人每天最多 100 次 AI 评分
+    const today = new Date().toISOString().split("T")[0];
+    const { count, error: countError } = await supabaseClient
+      .from("ai_usage")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("date", today);
+
+    if (!countError && count !== null && count >= 100) {
+      return new Response(
+        JSON.stringify({ error: "今日 AI 评分次数已用完（100次/天），已降级为关键词匹配", fallback: true }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const apiKey = Deno.env.get("OPENAI_API_KEY") ||
                    Deno.env.get("DEEPSEEK_API_KEY");
     const baseURL = Deno.env.get("AI_BASE_URL") ||
@@ -99,6 +114,14 @@ serve(async (req) => {
     if (!result || typeof result.score !== "number") {
       throw new Error("AI 返回格式异常");
     }
+
+    // 记录用量（异步，不阻塞响应）
+    supabaseClient.from("ai_usage").insert({
+      user_id: user.id,
+      date: today,
+    }).then(({ error: insertError }) => {
+      if (insertError) console.error("ai_usage insert error:", insertError);
+    });
 
     return new Response(
       JSON.stringify({
