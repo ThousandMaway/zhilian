@@ -25,7 +25,7 @@ interface OptionInput {
 }
 
 export default function QuestionEditScreen({ route, navigation }: any) {
-  const { questionId } = route.params || {};
+  const { questionId, tagId } = route.params || {};
   const isEdit = !!questionId;
 
   const { data: existingQuestion } = useQuestion(isEdit ? questionId : undefined);
@@ -52,7 +52,7 @@ export default function QuestionEditScreen({ route, navigation }: any) {
 
   const isSaving = createMutation.isPending || updateMutation.isPending;
 
-  // 回填编辑数据
+  // 回填编辑数据 + 预选标签
   useEffect(() => {
     if (existingQuestion) {
       setType(existingQuestion.type as QuestionType);
@@ -79,6 +79,13 @@ export default function QuestionEditScreen({ route, navigation }: any) {
       }
     }
   }, [existingQuestion]);
+
+  // 从题库页点「录题」进来时，自动选中该标签
+  useEffect(() => {
+    if (tagId && !isEdit && availableTags.length > 0) {
+      setSelectedTags([tagId]);
+    }
+  }, [tagId, isEdit, availableTags]);
 
   const addOption = () => {
     if (options.length >= 8) return; // 最多 8 个选项

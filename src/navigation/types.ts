@@ -18,7 +18,7 @@ export type HomeStackParamList = {
 export type QuestionsStackParamList = {
   QuestionList: undefined;
   QuestionDetail: { questionId?: string };
-  QuestionEdit: { questionId?: string };
+  QuestionEdit: { questionId?: string; tagId?: string };
   ImportQuestions: undefined;
 };
 

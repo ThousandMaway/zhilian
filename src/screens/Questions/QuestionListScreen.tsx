@@ -267,6 +267,18 @@ export default function QuestionListScreen({ navigation }: any) {
           <Text style={tw`text-lg font-bold text-gray-800`}>
             {selectedTag?.name || "题目"}
           </Text>
+          <View style={tw`flex-1`} />
+          <TouchableOpacity
+            style={tw`bg-primary-600 rounded-xl px-3 py-1.5 flex-row items-center`}
+            onPress={() =>
+              navigation.navigate("QuestionEdit", {
+                tagId: selectedTagId,
+              })
+            }
+          >
+            <Plus size={14} color="white" />
+            <Text style={tw`text-white ml-1 text-sm font-medium`}>录题</Text>
+          </TouchableOpacity>
         </View>
         <View style={tw`flex-row items-center bg-gray-100 rounded-xl px-3 py-2.5`}>
           <Search size={18} color="#9ca3af" />
