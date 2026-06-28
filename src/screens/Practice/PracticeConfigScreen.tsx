@@ -115,7 +115,7 @@ export default function PracticeConfigScreen({ navigation }: any) {
       desc: "只练收藏的重点题",
       icon: <Star size={24} color="#f59e0b" />,
       color: "bg-yellow-100",
-      onPress: () => handleStartPractice(PracticeMode.FAVORITE),
+      onPress: () => navigation.navigate("ProfileTab", { screen: "Favorites" }),
     },
   ];
 
