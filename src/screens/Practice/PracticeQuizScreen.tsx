@@ -159,6 +159,13 @@ export default function PracticeQuizScreen({ navigation }: any) {
     }
   };
 
+  // 普通切换：也重置结果
+  const handleNext = () => {
+    setShowResult(false);
+    setAiResult(null);
+    nextQuestion();
+  };
+
   // 手动确认答案（多选/填空/简答）
   const handleConfirmAnswer = async () => {
     setShowResult(true);
@@ -423,7 +430,7 @@ export default function PracticeQuizScreen({ navigation }: any) {
               onPress={
                 mode === PracticeMode.FREE && answeredInFreeMode
                   ? handleNextInFreeMode
-                  : nextQuestion
+                  : handleNext
               }
             >
               <Text style={tw`text-primary-600 mr-1 font-medium`}>
