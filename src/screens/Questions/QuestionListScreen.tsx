@@ -129,17 +129,13 @@ export default function QuestionListScreen({ navigation }: any) {
         <View style={tw`px-4 mt-2`}>
           <TouchableOpacity
             style={tw`flex-row items-center justify-center bg-white rounded-xl py-3 border border-dashed border-gray-300`}
-            onPress={async () => {
+            onPress={() => {
               setRenameTagId(null);
               setRenameSubmitted(false);
-              try {
-                const data: any = await createTagMutation.mutateAsync({
-                  name: "新题库",
-                  color: "#3b82f6",
-                });
-                setRenameTagId(data?.id);
-                setRenameText("新题库");
-              } catch {}
+              // 不立即创建，先弹出重命名框让用户输入
+              const tempId = "new_" + Date.now();
+              setRenameTagId(tempId);
+              setRenameText("");
             }}
           >
             <Plus size={18} color="#9ca3af" />
@@ -150,7 +146,9 @@ export default function QuestionListScreen({ navigation }: any) {
         {/* 题库标签列表 */}
         {renameTagId && (
           <View style={tw`mx-4 mb-4 bg-white rounded-xl p-4 border border-primary-300`}>
-            <Text style={tw`text-sm font-medium text-gray-600 mb-2`}>重命名标签</Text>
+            <Text style={tw`text-sm font-medium text-gray-600 mb-2`}>
+              {renameTagId?.startsWith("new_") ? "新建题库" : "重命名标签"}
+            </Text>
             <TextInput
               style={tw`bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-base`}
               value={renameText}
@@ -166,9 +164,21 @@ export default function QuestionListScreen({ navigation }: any) {
               </TouchableOpacity>
               <TouchableOpacity
                 style={tw`flex-1 bg-primary-600 rounded-xl py-2 items-center`}
-                onPress={() => {
-                  if (renameText.trim()) {
-                    setRenameSubmitted(true);
+                onPress={async () => {
+                  if (!renameText.trim()) return;
+                  setRenameSubmitted(true);
+                  // 如果是新标签（临时ID），先创建
+                  if (renameTagId?.startsWith("new_")) {
+                    try {
+                      const data: any = await createTagMutation.mutateAsync({
+                        name: renameText.trim(),
+                        color: "#3b82f6",
+                      });
+                      // 创建成功后自动关闭
+                      setRenameTagId(null);
+                      setRenameSubmitted(false);
+                    } catch {}
+                  } else {
                     updateTagMutation.mutate({ id: renameTagId, name: renameText.trim() });
                   }
                 }}
