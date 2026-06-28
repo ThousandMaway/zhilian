@@ -107,7 +107,7 @@ export default function PracticeConfigScreen({ navigation }: any) {
       desc: "专攻错题，精准提升",
       icon: <RotateCcw size={24} color="#ef4444" />,
       color: "bg-red-100",
-      onPress: () => handleStartPractice(PracticeMode.WRONG),
+      onPress: () => navigation.navigate("ProfileTab", { screen: "WrongQuestions" }),
     },
     {
       key: PracticeMode.FAVORITE,
