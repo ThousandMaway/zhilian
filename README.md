@@ -77,7 +77,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 ### 初始化数据库
 
-在 Supabase 控制台的 SQL Editor 中，按顺序执行 `supabase/migrations/` 下的迁移文件。
+在 Supabase 控制台的 SQL Editor 中，按顺序执行 `supabase/migrations/` 下的迁移文件（001 → 003 → 004）。
 
 ### 启动开发服务器
 
@@ -86,6 +86,39 @@ npm start
 ```
 
 用 Expo Go 扫码，或按 `a` (Android) / `i` (iOS) 启动模拟器。
+
+---
+
+## 🤖 AI 简答题判题（可选）
+
+不配置也能正常使用——简答题会使用关键词匹配算法判分。如需 AI 智能评分：
+
+**1. 部署 Edge Function**
+
+```bash
+supabase functions deploy ai-evaluate --no-verify-jwt
+```
+
+**2. 设置 API Key（三选一）**
+
+```bash
+# OpenAI
+supabase secrets set OPENAI_API_KEY=sk-xxx
+
+# DeepSeek（更便宜）
+supabase secrets set OPENAI_API_KEY=sk-xxx
+supabase secrets set AI_BASE_URL=https://api.deepseek.com/v1
+supabase secrets set AI_MODEL=deepseek-chat
+
+# 其他兼容 OpenAI 格式的 API
+supabase secrets set OPENAI_API_KEY=sk-xxx
+supabase secrets set AI_BASE_URL=https://your-api.com/v1
+supabase secrets set AI_MODEL=your-model
+```
+
+**3. 执行 004 迁移建 `ai_usage` 表**（速率限制用）
+
+未配 AI 时，简答题自动降级为关键词匹配，评分来源标注为 📋。
 
 ---
 
