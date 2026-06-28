@@ -24,7 +24,6 @@ export default function StatisticsScreen() {
         total: 0,
         correct: 0,
         accuracy: 0,
-        totalTime: 0,
         byType: {} as Record<string, { total: number; correct: number }>,
         weakTypes: [] as { type: string; label: string; accuracy: number }[],
       };
@@ -33,10 +32,6 @@ export default function StatisticsScreen() {
     const total = records.length;
     const correct = records.filter((r: any) => r.is_correct).length;
     const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-    const totalTime = records.reduce(
-      (sum: number, r: any) => sum + (r.time_spent || 0),
-      0
-    );
 
     // 按题型统计
     const byType: Record<string, { total: number; correct: number }> = {};
@@ -58,7 +53,7 @@ export default function StatisticsScreen() {
       .sort((a, b) => a.accuracy - b.accuracy)
       .slice(0, 5);
 
-    return { total, correct, accuracy, totalTime, byType, weakTypes };
+    return { total, correct, accuracy, byType, weakTypes };
   }, [records]);
 
   if (isLoading) {

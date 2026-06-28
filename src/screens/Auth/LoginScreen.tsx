@@ -10,10 +10,14 @@ import {
   Alert,
 } from "react-native";
 import { useAuthStore } from "~/stores/auth";
+import type { AuthStackParamList } from "~/navigation/types";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { APP_NAME } from "~/constants";
 import tw from "~/lib/tw";
 
-export default function LoginScreen({ navigation }: any) {
+type Props = NativeStackScreenProps<AuthStackParamList, "Login">;
+
+export default function LoginScreen({ navigation }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);

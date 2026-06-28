@@ -152,9 +152,6 @@ export default function QuestionListScreen({ navigation }: any) {
           </View>
         ) : (
           <View style={tw`px-4 mt-4 gap-3 mb-8`}>
-            {tags.length === 0 && (
-              <Text style={tw`text-gray-400 text-sm text-center mb-2`}>还没有题库标签，导入题库后会自动生成</Text>
-            )}
             {tags.map((tag, idx) => (
               <TouchableOpacity
                 key={tag.id}

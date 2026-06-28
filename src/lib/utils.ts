@@ -7,11 +7,21 @@ export function cn(...inputs: ClassValue[]): string {
 
 // 生成 UUID v4
 export function generateId(): string {
-  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === "x" ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+  return crypto.randomUUID();
+}
+
+// 简答题关键词匹配（公共判题逻辑）
+export function checkShortAnswer(userAnswer: string, referenceAnswer: string): boolean {
+  if (!userAnswer || !userAnswer.trim() || !referenceAnswer || !referenceAnswer.trim()) {
+    return false;
+  }
+  const keywords = referenceAnswer
+    .split(/[,，、\s]+/)
+    .filter((k) => k.length >= 2);
+  if (keywords.length === 0) return false;
+  const user = userAnswer.toLowerCase();
+  const matched = keywords.filter((kw) => user.includes(kw.toLowerCase()));
+  return matched.length >= Math.ceil(keywords.length / 2);
 }
 
 // 格式化日期

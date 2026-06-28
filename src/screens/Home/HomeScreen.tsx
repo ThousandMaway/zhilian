@@ -61,11 +61,13 @@ export default function HomeScreen({ navigation }: any) {
 
   const insets = useSafeAreaInsets();
 
+  const hour = new Date().getHours();
+  const greeting = hour < 6 ? "夜深了 🌙" : hour < 12 ? "早上好 ☀️" : hour < 18 ? "下午好 🌤" : "晚上好 🌙";
   return (
     <ScrollView style={tw`flex-1 bg-gray-50`}>
       {/* 顶部问候 */}
       <View style={[tw`bg-primary-600 px-6 pb-8 rounded-b-3xl`, { paddingTop: insets.top }]}>
-        <Text style={tw`text-white/80 text-sm`}>早上好 👋</Text>
+        <Text style={tw`text-white/80 text-sm`}>{greeting}</Text>
         <Text style={tw`text-white text-xl font-bold mt-1`}>
           {user?.email?.split("@")[0] || "同学"}
         </Text>

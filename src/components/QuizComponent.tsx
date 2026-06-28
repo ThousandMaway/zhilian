@@ -6,6 +6,7 @@ import {
   TextInput,
 } from "react-native";
 import { CheckCircle2, XCircle, Star } from "lucide-react-native";
+import { checkShortAnswer } from "~/lib/utils";
 import type { Question, QuestionOption } from "~/types";
 import { QuestionType } from "~/types";
 import tw from "~/lib/tw";
@@ -209,20 +210,10 @@ function ShortAnswerQuiz({
   const correctAnswer = (question.answer as string) || "";
   const [localInput, setLocalInput] = useState(() => (selectedAnswer as string) || "");
 
-  const checkKeywords = () => {
-    const answer = (selectedAnswer as string) || "";
-    if (!answer.trim() || !correctAnswer.trim()) return false;
-    const keywords = correctAnswer
-      .split(/[,，、\s]+/)
-      .filter((k) => k.length >= 2);
-    if (keywords.length === 0) return false;
-    const matched = keywords.filter((kw) =>
-      answer.toLowerCase().includes(kw.toLowerCase())
-    );
-    return matched.length >= Math.ceil(keywords.length / 2);
-  };
-
-  const isCorrect = showResult && checkKeywords();
+  const isCorrect = showResult && checkShortAnswer(
+    (selectedAnswer as string) || "",
+    correctAnswer
+  );
 
   return (
     <View>

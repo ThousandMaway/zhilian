@@ -28,7 +28,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import QuizComponent from "~/components/QuizComponent";
 import type { Question } from "~/types";
 import { QuestionType, PracticeMode } from "~/types";
-import { formatTime } from "~/lib/utils";
+import { formatTime, checkShortAnswer } from "~/lib/utils";
 import tw from "~/lib/tw";
 
 export default function PracticeQuizScreen({ navigation }: any) {
@@ -126,15 +126,8 @@ export default function PracticeQuizScreen({ navigation }: any) {
             String(userAnswer).trim().toLowerCase() ===
             String(question.answer).trim().toLowerCase()
           );
-        case QuestionType.SHORT_ANSWER: {
-          const keywords = String(question.answer)
-            .split(/[,，、\s]+/)
-            .filter((k) => k.length >= 2);
-          if (keywords.length === 0) return false;
-          const user = String(userAnswer).toLowerCase();
-          const matched = keywords.filter((kw) => user.includes(kw.toLowerCase()));
-          return matched.length >= Math.ceil(keywords.length / 2);
-        }
+        case QuestionType.SHORT_ANSWER:
+          return checkShortAnswer(String(userAnswer), String(question.answer));
         default:
           return false;
       }
