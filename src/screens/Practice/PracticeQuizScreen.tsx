@@ -259,6 +259,7 @@ export default function PracticeQuizScreen({ navigation }: any) {
         total: questions.length,
         correct: correctCount,
         timeSpent,
+        mode,
       });
     } catch (err: any) {
       Alert.alert("提交失败", err.message || "请重试");

@@ -18,7 +18,7 @@ import { formatTime } from "~/lib/utils";
 import tw from "~/lib/tw";
 
 export default function PracticeResultScreen({ route, navigation }: any) {
-  const { total = 0, correct = 0, timeSpent = 0 } = route.params || {};
+  const { total = 0, correct = 0, timeSpent = 0, mode } = route.params || {};
 
   const wrong = total - correct;
   const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
@@ -102,7 +102,13 @@ export default function PracticeResultScreen({ route, navigation }: any) {
           style={tw`bg-primary-600 rounded-xl py-3.5 items-center flex-row justify-center`}
           onPress={() => {
             navigation.popToTop();
-            navigation.navigate("PracticeConfig");
+            if (mode === "free") {
+              navigation.navigate("RandomConfig");
+            } else if (mode === "library") {
+              navigation.navigate("LibrarySelect");
+            } else {
+              navigation.navigate("PracticeConfig");
+            }
           }}
         >
           <RotateCcw size={20} color="white" />

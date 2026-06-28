@@ -12,7 +12,7 @@ export type MainTabParamList = {
 
 export type HomeStackParamList = {
   Home: undefined;
-  PracticeResult: { recordId: string };
+  PracticeResult: { recordId?: string; total?: number; correct?: number; timeSpent?: number; mode?: string };
 };
 
 export type QuestionsStackParamList = {
@@ -29,7 +29,7 @@ export type PracticeStackParamList = {
   PaperList: undefined;
   PaperEdit: { paperId?: string };
   PracticeQuiz: { mode: string; questionIds?: string[] };
-  PracticeResult: { sessionId?: string };
+  PracticeResult: { total: number; correct: number; timeSpent: number; mode?: string };
   PracticeFavorites: undefined;
   PracticeWrongQuestions: undefined;
 };
