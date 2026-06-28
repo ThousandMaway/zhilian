@@ -40,7 +40,18 @@ export default function QuestionListScreen({ navigation }: any) {
       createTagMutation.mutate({ name: "默认题库", color: "#3b82f6" });
     }
   }, [tagsLoading, tags.length]);
+
   const [renameText, setRenameText] = useState("");
+
+  // 重命名确认后标签出现时自动关闭输入框
+  useEffect(() => {
+    if (renameTagId && tags.some((t) => t.id === renameTagId)) {
+      const tag = tags.find((t) => t.id === renameTagId);
+      if (tag && tag.name === renameText) {
+        setRenameTagId(null);
+      }
+    }
+  }, [tags, renameTagId, renameText]);
   const insets = useSafeAreaInsets();
 
   let questions = data?.data || [];
@@ -121,6 +132,7 @@ export default function QuestionListScreen({ navigation }: any) {
           <TouchableOpacity
             style={tw`flex-row items-center justify-center bg-white rounded-xl py-3 border border-dashed border-gray-300`}
             onPress={async () => {
+              setRenameTagId(null); // 关闭上一个重命名框
               try {
                 const data: any = await createTagMutation.mutateAsync({
                   name: "新题库",
@@ -158,7 +170,6 @@ export default function QuestionListScreen({ navigation }: any) {
                 onPress={() => {
                   if (renameText.trim()) {
                     updateTagMutation.mutate({ id: renameTagId, name: renameText.trim() });
-                    setRenameTagId(null);
                   }
                 }}
               >
