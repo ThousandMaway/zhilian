@@ -117,6 +117,24 @@ export default function QuestionListScreen({ navigation }: any) {
             <Text style={tw`text-primary-600 ml-1.5 font-medium`}>导入题库</Text>
           </TouchableOpacity>
         </View>
+        <View style={tw`px-4 mt-2`}>
+          <TouchableOpacity
+            style={tw`flex-row items-center justify-center bg-white rounded-xl py-3 border border-dashed border-gray-300`}
+            onPress={async () => {
+              try {
+                const data: any = await createTagMutation.mutateAsync({
+                  name: "新题库",
+                  color: "#3b82f6",
+                });
+                setRenameTagId(data?.id);
+                setRenameText("新题库");
+              } catch {}
+            }}
+          >
+            <Plus size={18} color="#9ca3af" />
+            <Text style={tw`text-gray-400 ml-1.5 font-medium`}>创建空题库</Text>
+          </TouchableOpacity>
+        </View>
 
         {/* 题库标签列表 */}
         {renameTagId && (
