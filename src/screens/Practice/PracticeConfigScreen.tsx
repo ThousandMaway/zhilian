@@ -107,7 +107,7 @@ export default function PracticeConfigScreen({ navigation }: any) {
       desc: "专攻错题，精准提升",
       icon: <RotateCcw size={24} color="#ef4444" />,
       color: "bg-red-100",
-      onPress: () => navigation.navigate("ProfileTab", { screen: "WrongQuestions" }),
+      onPress: () => navigation.navigate("PracticeWrongQuestions"),
     },
     {
       key: PracticeMode.FAVORITE,
@@ -115,7 +115,7 @@ export default function PracticeConfigScreen({ navigation }: any) {
       desc: "只练收藏的重点题",
       icon: <Star size={24} color="#f59e0b" />,
       color: "bg-yellow-100",
-      onPress: () => navigation.navigate("ProfileTab", { screen: "Favorites" }),
+      onPress: () => navigation.navigate("PracticeFavorites"),
     },
   ];
 

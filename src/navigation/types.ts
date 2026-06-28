@@ -30,6 +30,8 @@ export type PracticeStackParamList = {
   PaperEdit: { paperId?: string };
   PracticeQuiz: { mode: string; questionIds?: string[] };
   PracticeResult: { sessionId?: string };
+  PracticeFavorites: undefined;
+  PracticeWrongQuestions: undefined;
 };
 
 export type ProfileStackParamList = {
