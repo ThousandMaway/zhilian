@@ -408,8 +408,16 @@ export default function PracticeQuizScreen({ navigation }: any) {
 
           <View style={tw`flex-1 items-end`} />
 
-          {/* 右侧按钮：提交 / 下一题 / 跳过 */}
+          {/* 右侧按钮：提交 / 下一题 / 跳过 / 返回（单题） */}
           {currentIndex === totalQuestions - 1 ? (
+            totalQuestions === 1 ? (
+              <TouchableOpacity
+                style={tw`rounded-xl py-3 px-8 bg-gray-400`}
+                onPress={() => navigation.goBack()}
+              >
+                <Text style={tw`text-white font-semibold`}>返回</Text>
+              </TouchableOpacity>
+            ) : (
             <TouchableOpacity
               style={tw`rounded-xl py-3 px-8 ${isSubmitting ? "bg-primary-400" : "bg-green-600"}`}
               onPress={handleSubmit}
@@ -426,6 +434,7 @@ export default function PracticeQuizScreen({ navigation }: any) {
                 </View>
               )}
             </TouchableOpacity>
+            )
           ) : (
             <TouchableOpacity
               style={tw`flex-row items-center py-2 px-3 rounded-xl`}
