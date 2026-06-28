@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { Trash2, Play, RotateCcw } from "lucide-react-native";
+import { Trash2, Play, RotateCcw, BookOpen, ChevronRight } from "lucide-react-native";
 import { useWrongQuestions, useRemoveWrongQuestion } from "~/queries/practice";
 import { usePracticeStore } from "~/stores/practice";
 import { QuestionType } from "~/types";
@@ -22,15 +22,16 @@ export default function WrongQuestionsScreen({ navigation }: any) {
   const handleRemove = (questionId: string) => {
     Alert.alert("移除错题", "确定要从错题本中移除这道题吗？", [
       { text: "取消", style: "cancel" },
-      {
-        text: "移除",
-        style: "destructive",
-        onPress: () => removeWrong.mutate(questionId),
-      },
+      { text: "移除", style: "destructive", onPress: () => removeWrong.mutate(questionId) },
     ]);
   };
 
-  const handleRetryQuestions = () => {
+  const handleRetrySingle = (question: Question) => {
+    startPractice([question], "wrong" as any);
+    navigation.navigate("PracticeTab", { screen: "PracticeQuiz" });
+  };
+
+  const handleRetryAll = () => {
     const questions = (wrongQuestions || [])
       .map((wq: any) => wq.questions)
       .filter(Boolean) as Question[];
@@ -39,10 +40,40 @@ export default function WrongQuestionsScreen({ navigation }: any) {
       return;
     }
     startPractice(questions, "wrong" as any);
-    navigation.navigate("PracticeTab", {
-      screen: "PracticeQuiz",
-    });
+    navigation.navigate("PracticeTab", { screen: "PracticeQuiz" });
   };
+
+  // 按标签分组
+  const grouped = useMemo(() => {
+    const tagMap: Record<string, { tagName: string; items: any[] }> = {};
+    const untagged: any[] = [];
+
+    for (const wq of wrongQuestions || []) {
+      const tags = wq.questions?.tags || [];
+      if (tags.length > 0) {
+        for (const tag of tags) {
+          if (!tagMap[tag.id]) {
+            tagMap[tag.id] = { tagName: tag.name, items: [] };
+          }
+          if (!tagMap[tag.id].items.some((i) => i.id === wq.id)) {
+            tagMap[tag.id].items.push(wq);
+          }
+        }
+      } else {
+        untagged.push(wq);
+      }
+    }
+
+    // 转为列表格式
+    const sections: { key: string; tagName: string; items: any[] }[] = [];
+    for (const [id, group] of Object.entries(tagMap)) {
+      sections.push({ key: id, tagName: group.tagName, items: group.items });
+    }
+    if (untagged.length > 0) {
+      sections.push({ key: "__untagged__", tagName: "未分类", items: untagged });
+    }
+    return sections;
+  }, [wrongQuestions]);
 
   const getTypeBadge = (type: string) => {
     const map: Record<string, { color: string; label: string }> = {
@@ -55,45 +86,6 @@ export default function WrongQuestionsScreen({ navigation }: any) {
     return map[type] || { color: "bg-gray-100 text-gray-600", label: type };
   };
 
-  const renderItem = ({ item }: { item: any }) => {
-    const question = item.questions as Question | null;
-    if (!question) return null;
-
-    const badge = getTypeBadge(question.type);
-
-    return (
-      <View style={tw`bg-white rounded-xl p-4 mb-3 mx-4 border border-gray-100`}>
-        <View style={tw`flex-row items-start justify-between`}>
-          <View style={tw`flex-row items-start flex-1 mr-2`}>
-            <View style={tw`rounded px-2 py-0.5 mr-2 mt-0.5 ${badge.color}`}>
-              <Text style={tw`text-xs font-medium`}>{badge.label}</Text>
-            </View>
-            <Text style={tw`text-gray-800 flex-1 leading-5 text-[15px]`} numberOfLines={2}>
-              {question.stem}
-            </Text>
-          </View>
-        </View>
-
-        <View style={tw`flex-row items-center justify-between mt-3 pt-3 border-t border-gray-50`}>
-          <View style={tw`flex-row items-center`}>
-            <Text style={tw`text-gray-400 text-xs`}>
-              错误 <Text style={tw`text-red-500 font-bold`}>{item.wrong_count}</Text> 次
-            </Text>
-          </View>
-          <View style={tw`flex-row gap-3`}>
-            <TouchableOpacity
-              style={tw`flex-row items-center`}
-              onPress={() => handleRemove(question.id)}
-            >
-              <Trash2 size={16} color="#9ca3af" />
-              <Text style={tw`text-gray-400 text-xs ml-1`}>移除</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    );
-  };
-
   if (isLoading) {
     return (
       <View style={tw`flex-1 items-center justify-center bg-gray-50`}>
@@ -104,14 +96,63 @@ export default function WrongQuestionsScreen({ navigation }: any) {
 
   const count = wrongQuestions?.length || 0;
 
+  const renderSection = ({ item: section }: { item: typeof grouped[number] }) => (
+    <View style={tw`mb-4`}>
+      <View style={tw`flex-row items-center px-4 mb-2`}>
+        <BookOpen size={16} color="#6b7280" />
+        <Text style={tw`text-gray-500 text-sm font-medium ml-1.5`}>
+          {section.tagName}
+        </Text>
+        <Text style={tw`text-gray-300 text-xs ml-2`}>
+          {section.items.length} 题
+        </Text>
+      </View>
+      {section.items.map((item: any) => {
+        const question = item.questions as Question | null;
+        if (!question) return null;
+        const badge = getTypeBadge(question.type);
+
+        return (
+          <TouchableOpacity
+            key={item.id}
+            style={tw`bg-white rounded-xl p-4 mb-2 mx-4 border border-gray-100`}
+            onPress={() => handleRetrySingle(question)}
+          >
+            <View style={tw`flex-row items-start justify-between`}>
+              <View style={tw`flex-row items-start flex-1 mr-2`}>
+                <View style={tw`rounded px-2 py-0.5 mr-2 mt-0.5 ${badge.color}`}>
+                  <Text style={tw`text-xs font-medium`}>{badge.label}</Text>
+                </View>
+                <Text style={tw`text-gray-800 flex-1 leading-5 text-[15px]`} numberOfLines={2}>
+                  {question.stem}
+                </Text>
+              </View>
+              <ChevronRight size={16} color="#d1d5db" style={tw`mt-1`} />
+            </View>
+            <View style={tw`flex-row items-center justify-between mt-3 pt-3 border-t border-gray-50`}>
+              <Text style={tw`text-gray-400 text-xs`}>
+                错误 <Text style={tw`text-red-500 font-bold`}>{item.wrong_count}</Text> 次
+              </Text>
+              <TouchableOpacity
+                style={tw`flex-row items-center`}
+                onPress={() => handleRemove(question.id)}
+              >
+                <Trash2 size={16} color="#9ca3af" />
+                <Text style={tw`text-gray-400 text-xs ml-1`}>移除</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
+  );
+
   return (
     <View style={tw`flex-1 bg-gray-50`}>
       {/* 顶部 */}
       <View style={tw`bg-white px-4 pt-4 pb-3 border-b border-gray-100 flex-row items-center justify-between`}>
         <View>
-          <Text style={tw`text-gray-800 font-semibold text-lg`}>
-            错题记录
-          </Text>
+          <Text style={tw`text-gray-800 font-semibold text-lg`}>错题记录</Text>
           <Text style={tw`text-gray-400 text-sm`}>
             {count > 0 ? `共 ${count} 道错题` : "暂无错题，继续保持！"}
           </Text>
@@ -119,12 +160,10 @@ export default function WrongQuestionsScreen({ navigation }: any) {
         {count > 0 && (
           <TouchableOpacity
             style={tw`flex-row items-center bg-primary-600 rounded-xl px-4 py-2`}
-            onPress={handleRetryQuestions}
+            onPress={handleRetryAll}
           >
             <RotateCcw size={16} color="white" />
-            <Text style={tw`text-white ml-1.5 font-medium text-sm`}>
-              错题重练
-            </Text>
+            <Text style={tw`text-white ml-1.5 font-medium text-sm`}>全部重练</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -133,15 +172,13 @@ export default function WrongQuestionsScreen({ navigation }: any) {
         <View style={tw`flex-1 items-center justify-center`}>
           <Text style={tw`text-6xl mb-4`}>🎉</Text>
           <Text style={tw`text-gray-500 text-base`}>没有错题记录</Text>
-          <Text style={tw`text-gray-300 text-sm mt-1`}>
-            继续保持！
-          </Text>
+          <Text style={tw`text-gray-300 text-sm mt-1`}>继续保持！</Text>
         </View>
       ) : (
         <FlatList
-          data={wrongQuestions}
-          renderItem={renderItem}
-          keyExtractor={(item: any) => item.id}
+          data={grouped}
+          renderItem={renderSection}
+          keyExtractor={(item: any) => item.key}
           style={tw`flex-1 pt-4`}
           contentContainerStyle={{ paddingBottom: 20 }}
         />
