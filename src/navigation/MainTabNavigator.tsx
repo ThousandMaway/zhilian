@@ -36,16 +36,24 @@ export default function MainTabNavigator() {
           tabBarLabel: "首页",
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            if (navigation.isFocused()) navigation.popToTop();
+          },
+        })}
       />
       <Tab.Screen
         name="QuestionsTab"
         component={QuestionsNavigator}
         options={{
           tabBarLabel: "题库",
-          tabBarIcon: ({ color, size }) => (
-            <BookOpen size={size} color={color} />
-          ),
+          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            if (navigation.isFocused()) navigation.popToTop();
+          },
+        })}
       />
       <Tab.Screen
         name="PracticeTab"
@@ -54,6 +62,11 @@ export default function MainTabNavigator() {
           tabBarLabel: "答题",
           tabBarIcon: ({ color, size }) => <Play size={size} color={color} />,
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            if (navigation.isFocused()) navigation.popToTop();
+          },
+        })}
       />
       <Tab.Screen
         name="ProfileTab"
@@ -62,6 +75,11 @@ export default function MainTabNavigator() {
           tabBarLabel: "我的",
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
         }}
+        listeners={({ navigation }) => ({
+          tabPress: () => {
+            if (navigation.isFocused()) navigation.popToTop();
+          },
+        })}
       />
     </Tab.Navigator>
   );
