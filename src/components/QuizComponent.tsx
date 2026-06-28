@@ -18,6 +18,7 @@ interface QuizComponentProps {
   isFavorited: boolean;
   onAnswer: (answer: string | string[]) => void;
   onToggleFavorite: () => void;
+  aiResult?: { score: number; comment: string; isCorrect: boolean; source: string } | null;
 }
 
 // ============================================================
@@ -206,14 +207,18 @@ function ShortAnswerQuiz({
   isFavorited,
   onAnswer,
   onToggleFavorite,
+  aiResult,
 }: QuizComponentProps) {
   const correctAnswer = (question.answer as string) || "";
   const [localInput, setLocalInput] = useState(() => (selectedAnswer as string) || "");
 
-  const isCorrect = showResult && checkShortAnswer(
-    (selectedAnswer as string) || "",
-    correctAnswer
-  );
+  // AI 结果优先，否则本地关键词匹配兜底
+  const hasAi = !!aiResult;
+  const isCorrect = showResult
+    ? (hasAi ? aiResult!.isCorrect : checkShortAnswer((selectedAnswer as string) || "", correctAnswer))
+    : false;
+  const resultComment = hasAi ? aiResult!.comment : null;
+  const resultScore = hasAi ? aiResult!.score : null;
 
   return (
     <View>
@@ -251,13 +256,27 @@ function ShortAnswerQuiz({
                   isCorrect ? "text-green-700" : "text-yellow-700"
                 }`}
               >
-                {isCorrect ? "关键词匹配通过" : "待人工批改（关键词匹配不完全）"}
+                {hasAi
+                  ? `AI 评分：${resultScore} 分`
+                  : isCorrect
+                  ? "关键词匹配通过"
+                  : "待人工批改（关键词匹配不完全）"}
               </Text>
             </View>
+            {resultComment && (
+              <Text style={tw`text-gray-600 text-sm mb-2 italic`}>
+                💬 {resultComment}
+              </Text>
+            )}
             <Text style={tw`text-gray-700 mt-2`}>
               <Text style={tw`font-medium`}>参考答案：</Text>
               {correctAnswer}
             </Text>
+            {hasAi && (
+              <Text style={tw`text-gray-400 text-xs mt-2`}>
+                {aiResult!.source === "ai" ? "🤖 AI 智能评分" : "📋 关键词匹配"}
+              </Text>
+            )}
           </View>
         </View>
       )}
@@ -381,6 +400,7 @@ export default function QuizComponent({
   isFavorited,
   onAnswer,
   onToggleFavorite,
+  aiResult,
 }: QuizComponentProps) {
   switch (question.type) {
     case QuestionType.SINGLE_CHOICE:
@@ -436,6 +456,7 @@ export default function QuizComponent({
           isFavorited={isFavorited}
           onAnswer={onAnswer}
           onToggleFavorite={onToggleFavorite}
+          aiResult={aiResult}
         />
       );
     default:

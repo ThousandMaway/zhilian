@@ -23,6 +23,7 @@ import {
   useUpsertCheckin,
   useFavoritedIds,
   useToggleFavorite,
+  useAiEvaluate,
 } from "~/queries/practice";
 import { useQueryClient } from "@tanstack/react-query";
 import QuizComponent from "~/components/QuizComponent";
@@ -49,11 +50,13 @@ export default function PracticeQuizScreen({ navigation }: any) {
   const [showResult, setShowResult] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [answeredInFreeMode, setAnsweredInFreeMode] = useState(false);
+  const [aiResult, setAiResult] = useState<any>(null);
   const startTimeRef = useRef<number>(startTime || Date.now());
 
   const bulkCreateRecords = useBulkCreatePracticeRecords();
   const addWrongQuestion = useAddWrongQuestion();
   const upsertCheckin = useUpsertCheckin();
+  const aiEvaluate = useAiEvaluate();
 
   const currentQuestion = questions[currentIndex] as Question | undefined;
   const totalQuestions = questions.length;
@@ -151,15 +154,27 @@ export default function PracticeQuizScreen({ navigation }: any) {
     if (currentIndex < totalQuestions - 1) {
       setShowResult(false);
       setAnsweredInFreeMode(false);
+      setAiResult(null);
       nextQuestion();
     }
   };
 
   // 手动确认答案（多选/填空/简答）
-  const handleConfirmAnswer = () => {
+  const handleConfirmAnswer = async () => {
     setShowResult(true);
     if (mode === PracticeMode.FREE) {
       setAnsweredInFreeMode(true);
+    }
+    // 简答题：触发 AI 判题（失败自动降级关键词）
+    if (currentQuestion?.type === QuestionType.SHORT_ANSWER) {
+      const result = await aiEvaluate.mutateAsync({
+        question: currentQuestion.stem,
+        userAnswer: (currentAnswer as string) || "",
+        referenceAnswer: currentQuestion.answer as string,
+      });
+      setAiResult(result);
+    } else {
+      setAiResult(null);
     }
   };
 
@@ -344,6 +359,7 @@ export default function PracticeQuizScreen({ navigation }: any) {
             isFavorited={isFavorited}
             onAnswer={handleAnswer}
             onToggleFavorite={handleToggleFavorite}
+            aiResult={aiResult}
           />
         </View>
       </ScrollView>
@@ -358,6 +374,7 @@ export default function PracticeQuizScreen({ navigation }: any) {
                 setShowResult(false);
                 setAnsweredInFreeMode(false);
               }
+              setAiResult(null);
               prevQuestion();
             }}
             disabled={currentIndex === 0}

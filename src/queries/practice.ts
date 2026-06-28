@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "~/lib/supabase";
 import type { PracticeRecord, WrongQuestion, DailyCheckin, Paper, Question } from "~/types";
+import { checkShortAnswer } from "~/lib/utils";
 import { DAILY_CHECKIN_GOAL } from "~/constants";
 
 async function getUserId(): Promise<string> {
@@ -433,6 +434,55 @@ export function useUpdatePaperQuestions() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["papers"] });
       queryClient.invalidateQueries({ queryKey: ["paper"] });
+    },
+  });
+}
+
+// ============================================================
+// AI 判题（简答题）：AI 优先，失败降级为关键词匹配
+// ============================================================
+
+export interface AiEvaluateResult {
+  score: number;
+  comment: string;
+  isCorrect: boolean;
+  source: "ai" | "keyword";
+}
+
+export function useAiEvaluate() {
+  return useMutation({
+    mutationFn: async ({
+      question,
+      userAnswer,
+      referenceAnswer,
+    }: {
+      question: string;
+      userAnswer: string;
+      referenceAnswer: string;
+    }): Promise<AiEvaluateResult> => {
+      try {
+        const res = await supabase.functions.invoke("ai-evaluate", {
+          body: { question, userAnswer, referenceAnswer },
+        });
+
+        if (res.error) throw res.error;
+
+        const data = res.data as any;
+        if (data?.fallback || data?.score === undefined) {
+          throw new Error("AI fallback");
+        }
+
+        return { ...data, source: "ai" };
+      } catch {
+        // 降级：关键词匹配
+        const isCorrect = checkShortAnswer(userAnswer, referenceAnswer);
+        return {
+          score: isCorrect ? 80 : 30,
+          comment: isCorrect ? "关键词匹配通过" : "关键词匹配不完全，待人工批改",
+          isCorrect,
+          source: "keyword",
+        };
+      }
     },
   });
 }
