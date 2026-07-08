@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  TextInput,
 } from "react-native";
 import { FileUp, CheckCircle2, AlertTriangle, Download } from "lucide-react-native";
 import * as DocumentPicker from "expo-document-picker";
@@ -245,20 +244,11 @@ export default function ImportQuestionsScreen({ navigation }: any) {
               <Text style={tw`text-green-600 ml-1.5 font-medium`}>
                 解析成功，共 {parsedQuestions.length} 题
               </Text>
-            </View>
-
-            {/* 标签名输入 */}
-            <View style={tw`mt-3`}>
-              <Text style={tw`text-sm font-medium text-gray-500 mb-1.5`}>
-                导入到哪个题库？不填以文件名作为标签
-              </Text>
-              <TextInput
-                style={tw`bg-white border border-gray-200 rounded-xl px-4 py-3 text-base text-gray-900`}
-                placeholder={fileName.replace(/\.[^.]+$/, "")}
-                placeholderTextColor="#9ca3af"
-                value={tagName}
-                onChangeText={setTagName}
-              />
+              {tagName ? (
+                <View style={tw`bg-blue-100 rounded-full px-2 py-0.5 ml-2`}>
+                  <Text style={tw`text-blue-600 text-xs`}>标签: {tagName}</Text>
+                </View>
+              ) : null}
             </View>
 
             <View style={tw`mt-3`}>
