@@ -36,13 +36,6 @@ export default function QuestionListScreen({ navigation }: any) {
   const [renameText, setRenameText] = useState("");
   const [renameSubmitted, setRenameSubmitted] = useState(false);
 
-  // 新用户自动创建默认题库
-  useEffect(() => {
-    if (!tagsLoading && tags.length === 0) {
-      createTagMutation.mutate({ name: "默认题库", color: "#3b82f6" });
-    }
-  }, [tagsLoading, tags.length]);
-
   // 用户确认重命名后，标签列表更新时自动关闭输入框
   useEffect(() => {
     if (renameTagId && renameSubmitted && tags.some((t) => t.id === renameTagId && t.name === renameText)) {
