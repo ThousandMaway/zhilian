@@ -1,7 +1,5 @@
-import React, { useRef } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { StackActions } from "@react-navigation/native";
 import type { MainTabParamList } from "./types";
 import HomeNavigator from "./HomeNavigator";
 import QuestionsNavigator from "./QuestionsNavigator";
@@ -12,34 +10,16 @@ import { Home, BookOpen, Play, User } from "lucide-react-native";
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export default function MainTabNavigator() {
-  const insets = useSafeAreaInsets();
-  const tabNavRef = useRef<any>(null);
-
-  const handleTabPress = (routeName: string) => {
-    if (tabNavRef.current) {
-      const state = tabNavRef.current.getState();
-      const currentRoute = state.routes[state.index];
-      // 如果已在这个 Tab 且该 Tab 内有子页面，回到根页面
-      if (currentRoute?.name === routeName) {
-        tabNavRef.current.dispatch({
-          ...StackActions.popToTop(),
-          target: currentRoute.key,
-        });
-      }
-    }
-  };
-
   return (
     <Tab.Navigator
-      ref={tabNavRef}
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: "#3b82f6",
         tabBarInactiveTintColor: "#9ca3af",
         tabBarStyle: {
           borderTopColor: "#f3f4f6",
-          paddingBottom: insets.bottom || 4,
-          height: 56 + (insets.bottom || 0),
+          paddingBottom: 4,
+          height: 56,
         },
         tabBarLabelStyle: {
           fontSize: 11,
@@ -54,19 +34,15 @@ export default function MainTabNavigator() {
           tabBarLabel: "首页",
           tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
         }}
-        listeners={{
-          tabPress: () => handleTabPress("HomeTab"),
-        }}
       />
       <Tab.Screen
         name="QuestionsTab"
         component={QuestionsNavigator}
         options={{
           tabBarLabel: "题库",
-          tabBarIcon: ({ color, size }) => <BookOpen size={size} color={color} />,
-        }}
-        listeners={{
-          tabPress: () => handleTabPress("QuestionsTab"),
+          tabBarIcon: ({ color, size }) => (
+            <BookOpen size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -76,9 +52,6 @@ export default function MainTabNavigator() {
           tabBarLabel: "答题",
           tabBarIcon: ({ color, size }) => <Play size={size} color={color} />,
         }}
-        listeners={{
-          tabPress: () => handleTabPress("PracticeTab"),
-        }}
       />
       <Tab.Screen
         name="ProfileTab"
@@ -86,9 +59,6 @@ export default function MainTabNavigator() {
         options={{
           tabBarLabel: "我的",
           tabBarIcon: ({ color, size }) => <User size={size} color={color} />,
-        }}
-        listeners={{
-          tabPress: () => handleTabPress("ProfileTab"),
         }}
       />
     </Tab.Navigator>

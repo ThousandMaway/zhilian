@@ -29,13 +29,33 @@ export function useQuestions(filters: QuestionFilters = {}) {
       if (filters.type) {
         query = query.eq("type", filters.type);
       }
-      if (filters.tagId) {
-        query = query.filter("tags.id", "eq", filters.tagId);
-      }
 
       const page = filters.page || 1;
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
+
+      // 按标签过滤：通过 question_tags 关联表精确过滤
+      if (filters.tagId) {
+        const { count: totalCount } = await supabase
+          .from("question_tags")
+          .select("*", { count: "exact", head: true })
+          .eq("tag_id", filters.tagId);
+
+        const { data: qtRows } = await supabase
+          .from("question_tags")
+          .select("question_id")
+          .eq("tag_id", filters.tagId)
+          .order("question_id")
+          .range(from, to);
+
+        const questionIds = (qtRows || []).map((r: any) => r.question_id);
+        if (questionIds.length === 0) return { data: [], total: totalCount || 0 };
+
+        query = query.in("id", questionIds).order("created_at", { ascending: false });
+        const { data, error } = await query;
+        if (error) throw error;
+        return { data: data as Question[], total: totalCount || 0 };
+      }
 
       const { data, error, count } = await query
         .order("created_at", { ascending: false })
@@ -262,8 +282,8 @@ export function useBulkImportQuestions() {
         .select("id");
       if (error) throw error;
 
-      // 自动打标签（用文件名）
-      if (tagName && inserted) {
+      // 自动打标签（用文件名，排除默认题库）
+      if (tagName && tagName !== "默认题库" && inserted) {
         // 查找或创建标签
         const { data: existingTag } = await supabase
           .from("tags")
@@ -284,9 +304,10 @@ export function useBulkImportQuestions() {
 
         // 关联标签
         if (tagId) {
-          await supabase.from("question_tags").insert(
+          const { error: linkError } = await supabase.from("question_tags").insert(
             inserted.map((q: any) => ({ question_id: q.id, tag_id: tagId }))
           );
+          if (linkError) console.error("[BulkImport] link tags failed:", linkError);
         }
       }
     },
