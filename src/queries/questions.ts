@@ -262,8 +262,8 @@ export function useBulkImportQuestions() {
         .select("id");
       if (error) throw error;
 
-      // 自动打标签（用文件名）
-      if (tagName && inserted) {
+      // 自动打标签（用文件名，排除默认题库）
+      if (tagName && tagName !== "默认题库" && inserted) {
         // 查找或创建标签
         const { data: existingTag } = await supabase
           .from("tags")
@@ -284,9 +284,10 @@ export function useBulkImportQuestions() {
 
         // 关联标签
         if (tagId) {
-          await supabase.from("question_tags").insert(
+          const { error: linkError } = await supabase.from("question_tags").insert(
             inserted.map((q: any) => ({ question_id: q.id, tag_id: tagId }))
           );
+          if (linkError) console.error("[BulkImport] link tags failed:", linkError);
         }
       }
     },
