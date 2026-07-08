@@ -29,13 +29,33 @@ export function useQuestions(filters: QuestionFilters = {}) {
       if (filters.type) {
         query = query.eq("type", filters.type);
       }
-      if (filters.tagId) {
-        query = query.filter("tags.id", "eq", filters.tagId);
-      }
 
       const page = filters.page || 1;
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
+
+      // 按标签过滤：通过 question_tags 关联表精确过滤
+      if (filters.tagId) {
+        const { count: totalCount } = await supabase
+          .from("question_tags")
+          .select("*", { count: "exact", head: true })
+          .eq("tag_id", filters.tagId);
+
+        const { data: qtRows } = await supabase
+          .from("question_tags")
+          .select("question_id")
+          .eq("tag_id", filters.tagId)
+          .order("question_id")
+          .range(from, to);
+
+        const questionIds = (qtRows || []).map((r: any) => r.question_id);
+        if (questionIds.length === 0) return { data: [], total: totalCount || 0 };
+
+        query = query.in("id", questionIds).order("created_at", { ascending: false });
+        const { data, error } = await query;
+        if (error) throw error;
+        return { data: data as Question[], total: totalCount || 0 };
+      }
 
       const { data, error, count } = await query
         .order("created_at", { ascending: false })
